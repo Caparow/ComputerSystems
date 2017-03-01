@@ -1,6 +1,6 @@
 import Task._
 
-object Processor {
+package Processor {
   case class Processor(operationsPerMS: Int,
                          var state : Boolean = false,
                          var timeLeft : Int = 0) {

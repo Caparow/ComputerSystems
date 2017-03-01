@@ -13,43 +13,49 @@ package FIFO {
                   startingNumOfTasks: Int) {
 
     val random = scala.util.Random
-    var time: Int = 0
-    var taskList: ListBuffer[Task] = ListBuffer()
+
     var readyState: Boolean = false
+    var taskList: ListBuffer[Task] = ListBuffer()
     var operationsDone: Int = 0
     var totalOpPerMS = 0
     processorsList.foreach(totalOpPerMS += _.operationsPerMS)
-    init()
-
-    def getCOE: Double = operationsDone.toDouble / time / totalOpPerMS
+    processorsList.foreach(_.state = false)
 
     private def executeProcessor(processor: Processor): Unit = {
-      if (taskList.nonEmpty &&
-        !processor.getState &&
-        taskList.head.appropriateProcessors.contains(processorsList.indexOf(processor))){
-
-        processor.setTask(taskList.head)
-        /**println("set task for " + processorsList.indexOf(proc).toString +
+      if (taskList.nonEmpty && !processor.getState) {
+        if (taskList.head.appropriateProcessors.contains(processorsList.indexOf(processor))){
+          processor.setTask(taskList.head)
+          /**println("set task for " + processorsList.indexOf(proc).toString +
           " processor with time " +
           taskList.head.execTime.toString) */
-        operationsDone += taskList.head.execTime
 
-        if (taskList.size == 1)
-          taskList = ListBuffer()
-        else
           taskList = taskList.drop(1)
+        }
       }
-      else processor.executeTask()
+      else {
+        operationsDone += processor.operationsPerMS
+        processor.executeTask()
+      }
     }
 
-    private def init(): Unit = {
+    private def process: Double = {
+      var time: Int = 0
+      operationsDone = 0
       taskList = createTaskList(startingNumOfTasks, sRangeOfDif, eRangeOfDif)
-      while (taskList.nonEmpty && !readyState){
+      while (time < 10000){
         if(random.nextInt(100) < probability)
           taskList += createTask(sRangeOfDif, eRangeOfDif)
         processorsList.foreach(executeProcessor)
         time += 1
       }
+      operationsDone.toDouble / time / totalOpPerMS
+    }
+
+    def testCOE: Double = {
+      var COE: Double = 0
+      for (_ <- 1 to 10)
+        COE += process
+      COE / 10
     }
   }
 }
