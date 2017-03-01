@@ -10,26 +10,31 @@ package FIFO {
                   probability: Int,
                   sRangeOfDif: Int,
                   eRangeOfDif: Int,
-                  startingNumOfTasks: Int) {
+                  startingNumOfTasks: Int,
+                  timeForCheck: Int) {
 
     val random = scala.util.Random
-
     var readyState: Boolean = false
     var taskList: ListBuffer[Task] = ListBuffer()
     var operationsDone: Int = 0
     var totalOpPerMS = 0
+    var operationsReleased = 0
+    var tasksReleased = 0
     processorsList.foreach(totalOpPerMS += _.operationsPerMS)
     processorsList.foreach(_.state = false)
 
     private def executeProcessor(processor: Processor): Unit = {
+      import scala.util.control.Breaks._
       if (taskList.nonEmpty && !processor.getState) {
-        if (taskList.head.appropriateProcessors.contains(processorsList.indexOf(processor))){
-          processor.setTask(taskList.head)
-          /**println("set task for " + processorsList.indexOf(proc).toString +
-          " processor with time " +
-          taskList.head.execTime.toString) */
-
-          taskList = taskList.drop(1)
+        breakable{
+          for (task <- taskList){
+            if (task.appropriateProcessors.contains(processorsList.indexOf(processor))){
+              processor.setTask(task)
+              taskList.remove(taskList.indexOf(task))
+              tasksReleased += 1
+              break()
+            }
+          }
         }
       }
       else {
@@ -41,20 +46,30 @@ package FIFO {
     private def process: Double = {
       var time: Int = 0
       operationsDone = 0
+      tasksReleased = 0
       taskList = createTaskList(startingNumOfTasks, sRangeOfDif, eRangeOfDif)
-      while (time < 10000){
+      while (time < timeForCheck){
         if(random.nextInt(100) < probability)
           taskList += createTask(sRangeOfDif, eRangeOfDif)
         processorsList.foreach(executeProcessor)
         time += 1
       }
+      operationsReleased = operationsDone
       operationsDone.toDouble / time / totalOpPerMS
     }
 
     def testCOE: Double = {
+      var tasks: Int = 0
+      var op: Int = 0
       var COE: Double = 0
-      for (_ <- 1 to 10)
+      for (_ <- 1 to 5){
         COE += process
+        tasks += tasksReleased
+        op += operationsReleased
+      }
+      println("COE of First-In-First-Out algorithm: " + (COE / 5).toString)
+      println("Tasks released: " + (tasks/5).toString)
+      println("Operations released: " + (op/5).toString)
       COE / 10
     }
   }

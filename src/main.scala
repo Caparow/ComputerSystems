@@ -12,6 +12,7 @@ object main {
     val startDifficultOfTask = 500
     val endDifficultOfTask = 10000
     val startingNumOfTasks = 20
+    val timeForCheck = 1000
     val processorsList: List[Processor] = List(Processor(600),
                                                Processor(400),
                                                Processor(300),
@@ -22,15 +23,24 @@ object main {
       probabilityOfNewTask,
       startDifficultOfTask,
       endDifficultOfTask,
-      startingNumOfTasks)
+      startingNumOfTasks,
+      timeForCheck)
     val scheduler = Scheduler(processorsList,
       probabilityOfNewTask,
       startDifficultOfTask,
       endDifficultOfTask,
-      startingNumOfTasks)
-    println("COE of First-In-First-Out algorithm: " + fifo.testCOE.toString)
-    println("COE of the Scheduler on the worst processor: " + scheduler.testCOEonWorstProc.toString)
-    println("COE of the Scheduler on the best processor (20, 4): " + scheduler.testCOEonBestProc.toString)
+      startingNumOfTasks,
+      timeForCheck)
+
+    println("_"*10)
+    fifo.testCOE
+    println("_"*10)
+    scheduler.testCOEonWorstProc
+    println("_"*10)
+    scheduler.testCOEonBestProc(20)
+    println("_"*10)
+    scheduler.testCOEonBestProc(60)
+    println("_"*10)
   }
 }
 
