@@ -24,17 +24,12 @@ package FIFO {
     processorsList.foreach(_.state = false)
 
     private def executeProcessor(processor: Processor): Unit = {
-      import scala.util.control.Breaks._
       if (taskList.nonEmpty && !processor.getState) {
-        breakable{
-          for (task <- taskList){
-            if (task.appropriateProcessors.contains(processorsList.indexOf(processor))){
-              processor.setTask(task)
-              taskList.remove(taskList.indexOf(task))
-              tasksReleased += 1
-              break()
-            }
-          }
+        if (taskList.head.appropriateProcessors.contains(processorsList.indexOf(processor))){
+          processor.setTask(taskList.head)
+          taskList.remove(taskList.indexOf(taskList.head))
+          taskList.drop(1)
+          tasksReleased += 1
         }
       }
       else {

@@ -10,16 +10,16 @@ object Task{
   def createTask(s: Int, e: Int): Task = {
     val random = scala.util.Random
     var pr: ListBuffer[Int] = ListBuffer()
-    var n = random.nextInt(4)
-    for (i <- 1 to n){
+    var n = 1 + random.nextInt(3)
+    for (_ <- 1 to n){
       pr += random.nextInt(4)
     }
-    Task(s+random.nextInt(e), pr.toList)
+    Task(s+random.nextInt(e-s), pr.toList)
   }
 
   def createTaskList(n: Int, sRangeOfDif: Int, eRangeOfDif: Int): ListBuffer[Task] ={
     var taskList: ListBuffer[Task] = ListBuffer()
-    for (i <- 0 until n)
+    for (_ <- 0 until n)
       taskList += createTask(sRangeOfDif, eRangeOfDif)
     taskList
   }
