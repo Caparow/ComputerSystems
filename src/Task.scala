@@ -10,7 +10,7 @@ object Task{
   def createTask(s: Int, e: Int): Task = {
     val random = scala.util.Random
     var pr: ListBuffer[Int] = ListBuffer()
-    var n = 1 + random.nextInt(3)
+    var n = 1 + random.nextInt(2)
     for (_ <- 1 to n){
       pr += random.nextInt(4)
     }

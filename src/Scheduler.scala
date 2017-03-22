@@ -122,7 +122,6 @@ package Scheduler {
           operationsDone += execOneCycle(worstProc)
           time += 1
         }
-
         operationsReleased = operationsDone
         (operationsDone.toDouble / time) / (totalOpPerMS - processorsList(worstProc).operationsPerMS)
       } else {

@@ -6,42 +6,44 @@ import Processor.Processor
 import FIFO.FIFO
 import Scheduler.Scheduler
 
-object main {
-  def main(ars: Array[String]): Unit ={
-    val probabilityOfNewTask = 60
-    val startDifficultOfTask = 500
-    val endDifficultOfTask = 10000
-    val startingNumOfTasks = 20
-    val timeForCheck = 1000
-    val processorsList: List[Processor] = List(Processor(600),
-                                               Processor(400),
-                                               Processor(300),
-                                               Processor(200),
-                                               Processor(50))
+object Main extends App {
+  println("\t ENTER SOME VALUES:")
+  val probabilityOfNewTask = readLine("Enter the probability of new task: ").toInt
+  val startDifficultOfTask = readLine("Enter min difficult of the task: ").toInt
+  val endDifficultOfTask = readLine("Enter max difficult of the task: ").toInt
+  val startingNumOfTasks = readLine("Enter starting number of tasks: ").toInt
+  val timeForCheck = readLine("Enter time for experement(ms): ").toInt
+  println("\t ENTER OPS FOR PROCESSORS:")
+  val processorsList: List[Processor] = List(Processor(readLine("OPS for 1st: ").toInt),
+    Processor(readLine("OPS for 2st: ").toInt),
+    Processor(readLine("OPS for 3st: ").toInt),
+    Processor(readLine("OPS for 4st: ").toInt),
+    Processor(readLine("OPS for 5st: ").toInt))
 
-    val fifo = FIFO(processorsList,
-      probabilityOfNewTask,
-      startDifficultOfTask,
-      endDifficultOfTask,
-      startingNumOfTasks,
-      timeForCheck)
-    val scheduler = Scheduler(processorsList,
-      probabilityOfNewTask,
-      startDifficultOfTask,
-      endDifficultOfTask,
-      startingNumOfTasks,
-      timeForCheck)
+  val fifo = FIFO(processorsList,
+    probabilityOfNewTask,
+    startDifficultOfTask,
+    endDifficultOfTask,
+    startingNumOfTasks,
+    timeForCheck)
 
-    println("_"*10)
-    fifo.testCOE
-    println("_"*10)
-    scheduler.testCOEonWorstProc
-    println("_"*10)
-    scheduler.testCOEonBestProc(20)
-    println("_"*10)
-    scheduler.testCOEonBestProc(60)
-    println("_"*10)
-  }
+  val scheduler = Scheduler(processorsList,
+    probabilityOfNewTask,
+    startDifficultOfTask,
+    endDifficultOfTask,
+    startingNumOfTasks,
+    timeForCheck)
+
+  println("\n\tCOE FOR YOUR VALUES:\n")
+  println("_"*10)
+  fifo.testCOE
+  println("_"*10)
+  scheduler.testCOEonWorstProc
+  println("_"*10)
+  scheduler.testCOEonBestProc(20)
+  println("_"*10)
+  scheduler.testCOEonBestProc(60)
+  println("_"*10)
 }
 
 
